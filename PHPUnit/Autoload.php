@@ -50,10 +50,9 @@ require_once 'PHPUnit/Extensions/SeleniumTestCase/Autoload.php';
 require_once 'PHPUnit/Extensions/Story/Autoload.php';
 require_once 'Text/Template/Autoload.php';
 
-function phpunit_autoload($class) {
+function phpunit_autoload($class = NULL) {
     static $classes = NULL;
     static $path = NULL;
-    static $filter = NULL;
 
     if ($classes === NULL) {
         $classes = array(
@@ -65,6 +64,7 @@ function phpunit_autoload($class) {
           'phpunit_extensions_repeatedtest' => '/Extensions/RepeatedTest.php',
           'phpunit_extensions_testdecorator' => '/Extensions/TestDecorator.php',
           'phpunit_extensions_ticketlistener' => '/Extensions/TicketListener.php',
+          'phpunit_extensions_ticketlistener_fogbugz' => '/Extensions/TicketListener/Fogbugz.php',
           'phpunit_extensions_ticketlistener_github' => '/Extensions/TicketListener/GitHub.php',
           'phpunit_extensions_ticketlistener_googlecode' => '/Extensions/TicketListener/GoogleCode.php',
           'phpunit_extensions_ticketlistener_trac' => '/Extensions/TicketListener/Trac.php',
@@ -167,8 +167,21 @@ function phpunit_autoload($class) {
         );
 
         $path = dirname(__FILE__);
+    }
 
-        $filter = PHP_CodeCoverage_Filter::getInstance();
+    if ($class === NULL) {
+        $result = array(__FILE__);
+
+        if (isset($_SERVER['_']) &&
+            strpos($_SERVER['_'], 'phpunit') !== FALSE) {
+            $result[] = $_SERVER['_'];
+        }
+
+        foreach ($classes as $file) {
+            $result[] = $path . $file;
+        }
+
+        return $result;
     }
 
     $cn = strtolower($class);
@@ -177,8 +190,6 @@ function phpunit_autoload($class) {
         $file = $path . $classes[$cn];
 
         require $file;
-
-        $filter->addFileToBlackList($file, 'PHPUNIT');
     }
 }
 
