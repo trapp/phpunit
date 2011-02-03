@@ -318,6 +318,7 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
                 );
 
                 $writer = new PHP_CodeCoverage_Report_Clover;
+
                 $writer->process(
                   $this->codeCoverage, $arguments['coverageClover']
                 );
@@ -486,6 +487,11 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
             if (isset($phpunitConfiguration['bootstrap']) &&
                 !isset($arguments['bootstrap'])) {
                 $arguments['bootstrap'] = $phpunitConfiguration['bootstrap'];
+            }
+
+            if (isset($phpunitConfiguration['cacheTokens']) &&
+                !isset($arguments['cacheTokens'])) {
+                $arguments['cacheTokens'] = $phpunitConfiguration['cacheTokens'];
             }
 
             if (isset($phpunitConfiguration['colors']) &&
@@ -686,6 +692,12 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
                   $filterConfiguration['whitelist']['addUncoveredFilesFromWhitelist']
                 );
 
+                if (isset($arguments['cacheTokens'])) {
+                    $this->codeCoverage->setCacheTokens(
+                      $arguments['cacheTokens']
+                    );
+                }
+
                 if (isset($arguments['forceCoversAnnotation'])) {
                     $this->codeCoverage->setForceCoversAnnotation(
                       $arguments['forceCoversAnnotation']
@@ -722,6 +734,7 @@ class PHPUnit_TextUI_TestRunner extends PHPUnit_Runner_BaseTestRunner
 
         $arguments['backupGlobals']               = isset($arguments['backupGlobals'])               ? $arguments['backupGlobals']               : NULL;
         $arguments['backupStaticAttributes']      = isset($arguments['backupStaticAttributes'])      ? $arguments['backupStaticAttributes']      : NULL;
+        $arguments['cacheTokens']                 = isset($arguments['cacheTokens'])                 ? $arguments['cacheTokens']                 : TRUE;
         $arguments['colors']                      = isset($arguments['colors'])                      ? $arguments['colors']                      : FALSE;
         $arguments['convertErrorsToExceptions']   = isset($arguments['convertErrorsToExceptions'])   ? $arguments['convertErrorsToExceptions']   : TRUE;
         $arguments['convertNoticesToExceptions']  = isset($arguments['convertNoticesToExceptions'])  ? $arguments['convertNoticesToExceptions']  : TRUE;
