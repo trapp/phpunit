@@ -35,49 +35,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package    PHPUnit
- * @subpackage Extensions_PhptTestCase
+ * @subpackage Util
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.1.4
+ * @since      File available since Release 3.5.12
  */
 
 /**
- * Suite for .phpt test cases.
+ * Default utility for PHP sub-processes.
  *
  * @package    PHPUnit
- * @subpackage Extensions_PhptTestCase
+ * @subpackage Util
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version    Release: @package_version@
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.1.4
+ * @since      Class available since Release 3.5.12
  */
-class PHPUnit_Extensions_PhptTestSuite extends PHPUnit_Framework_TestSuite
+class PHPUnit_Util_PHP_Default extends PHPUnit_Util_PHP
 {
     /**
-     * Constructs a new TestSuite for .phpt test cases.
-     *
-     * @param  string $directory
-     * @param  array  $options Array with ini settings for the php instance run,
-     *                         key being the name if the setting, value the ini value.
-     * @throws InvalidArgumentException
+     * @param resource $pipe
+     * @since Method available since Release 3.5.12
      */
-    public function __construct($directory, array $options = array())
+    protected function process($pipe, $job)
     {
-        if (is_string($directory) && is_dir($directory)) {
-            $this->setName($directory);
-
-            $facade = new File_Iterator_Facade;
-            $files  = $facade->getFilesAsArray($directory, '.phpt');
-
-            foreach ($files as $file) {
-                $this->addTestFile($file, $options);
-            }
-        } else {
-            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'directory name');
-        }
+        fwrite($pipe, $job);
     }
 }
