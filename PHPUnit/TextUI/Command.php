@@ -665,7 +665,9 @@ class PHPUnit_TextUI_Command
                     $this->showExtensionNotLoadedMessage(
                       'tokenizer', 'No code coverage will be generated.'
                     );
-                } else {
+                }
+
+                else if (!extension_loaded('Xdebug')) {
                     $this->showExtensionNotLoadedMessage(
                       'Xdebug', 'No code coverage will be generated.'
                     );
@@ -677,7 +679,9 @@ class PHPUnit_TextUI_Command
                     $this->showExtensionNotLoadedMessage(
                       'tokenizer', 'No code coverage will be generated.'
                     );
-                } else {
+                }
+
+                else if (!extension_loaded('Xdebug')) {
                     $this->showExtensionNotLoadedMessage(
                       'Xdebug', 'No code coverage will be generated.'
                     );
@@ -882,6 +886,10 @@ class PHPUnit_TextUI_Command
      */
     protected function showExtensionNotLoadedMessage($extension, $message = '')
     {
+        if (!empty($message)) {
+            $message = ' ' . $message;
+        }
+
         $this->showMessage(
           'The ' . $extension . ' extension is not loaded.' . $message . "\n",
           FALSE
