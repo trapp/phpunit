@@ -165,6 +165,21 @@ class PHPUnit_Framework_TestResult implements Countable
     protected $lastTestFailed = FALSE;
 
     /**
+     * @var integer
+     */
+    protected $timeoutForSmallTests = 1;
+
+    /**
+     * @var integer
+     */
+    protected $timeoutForMediumTests = 10;
+
+    /**
+     * @var integer
+     */
+    protected $timeoutForLargeTests = 60;
+
+    /**
      * Registers a TestListener.
      *
      * @param  PHPUnit_Framework_TestListener
@@ -595,7 +610,12 @@ class PHPUnit_Framework_TestResult implements Countable
         PHP_Timer::start();
 
         try {
-            $test->runBare();
+            if ($this->strictMode) {
+                $invoker = new PHP_Invoker;
+                $invoker->invoke(array($test, 'runBare'), array(), 0);
+            } else {
+                $test->runBare();
+            }
         }
 
         catch (PHPUnit_Framework_AssertionFailedError $e) {
@@ -853,5 +873,53 @@ class PHPUnit_Framework_TestResult implements Countable
     public function wasSuccessful()
     {
         return empty($this->errors) && empty($this->failures);
+    }
+
+    /**
+     * Sets the timeout for small tests.
+     *
+     * @param  integer $timeout
+     * @throws InvalidArgumentException
+     * @since  Method available since Release 3.6.0
+     */
+    public function setTimeoutForSmallTests($timeout)
+    {
+        if (is_integer($timeout)) {
+            $this->timeoutForSmallTests = $timeout;
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'integer');
+        }
+    }
+
+    /**
+     * Sets the timeout for medium tests.
+     *
+     * @param  integer $timeout
+     * @throws InvalidArgumentException
+     * @since  Method available since Release 3.6.0
+     */
+    public function setTimeoutForMediumTests($timeout)
+    {
+        if (is_integer($timeout)) {
+            $this->timeoutForMediumTests = $timeout;
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'integer');
+        }
+    }
+
+    /**
+     * Sets the timeout for large tests.
+     *
+     * @param  integer $timeout
+     * @throws InvalidArgumentException
+     * @since  Method available since Release 3.6.0
+     */
+    public function setTimeoutForLargeTests($timeout)
+    {
+        if (is_integer($timeout)) {
+            $this->timeoutForLargeTests = $timeout;
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(1, 'integer');
+        }
     }
 }
